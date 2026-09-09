@@ -1,0 +1,12 @@
+.idea
+include/
+qtcreator
+.vscode
+build/ 
+cmake-build-debug/ 
+cmake-build-release/ 
+external/ 
+compile_commands.json 
+.cache
+compile_commands.json
+all_code.txt

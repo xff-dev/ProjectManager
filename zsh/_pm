@@ -1,0 +1,36 @@
+#compdef pm
+
+_pm() {
+  local prev_word="${words[CURRENT-1]}"
+  local prev2_word="${words[CURRENT-2]}"
+
+  local -a commands=(
+    'build:Build task'
+    'run:Run task'
+    'list:List projects'
+    'list-names:List project names'
+    'script:Run a script'
+    'list-scripts:List available scripts'
+    'remove:Remove a project'
+    'add:Add a new project'
+    'open:Open a project'
+  )
+
+  if [[ "$prev_word" == "script" ]]; then
+    local -a scripts
+    scripts=(${(f)"$(pm list-scripts 2>/dev/null)"})
+    _describe -t scripts 'script name' scripts
+  elif [[ "$prev_word" == "remove" || "$prev_word" == "open" ]]; then
+    local -a projects
+    projects=(${(f)"$(pm list-names 2>/dev/null)"})
+    _describe -t projects 'project name' projects
+  elif [[ "$prev_word" == "add" ]]; then
+    _message -e names 'Project name'
+  elif [[ "$prev2_word" == "add" ]]; then
+    _files -/
+  else
+    _describe -t commands 'pm command' commands
+  fi
+}
+
+_pm "$@"
