@@ -1,6 +1,7 @@
 #include "App/App.hpp"
 #include "CLI/CLI.hpp"
 #include "CommandRunner/CommandRunner.hpp"
+#include "CommandRunner/Terminal/Ghostty.cpp"
 #include "Project/ConfigLoader.hpp"
 #include "Project/Registry.hpp"
 #include "utils/Console.hpp"
@@ -26,7 +27,8 @@ int main(int argc, char **argv) {
 
   try {
     ConfigLoader loader;
-    CommandRunner runner(console);
+    GhosttyLauncher launcher;
+    CommandRunner runner(console, launcher);
 
     CLI cli(argc, argv);
     auto cliResult = cli.parse();

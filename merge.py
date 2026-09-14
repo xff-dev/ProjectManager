@@ -23,6 +23,8 @@ if __name__ == "__main__":
     files = collect_cpp_files("src")
     files += collect_cpp_files("tests")
     files.append("CMakeLists.txt")
+    files.append("project.ini")
+
 
     merge_files(files, OUTPUT_FILE)
 

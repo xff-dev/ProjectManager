@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../src/App/App.hpp"
+#include "../../src/CommandRunner/Terminal/Dummy.cpp"
 #include "../test_helpers.hpp"
 #include <filesystem>
 #include <fstream>
@@ -34,7 +35,8 @@ inline void runAppWithCwd(const std::vector<Task> &tasks,
 
   Console console(output);
   ConfigLoader loader;
-  CommandRunner runner(console);
+  Dummy launcher;
+  CommandRunner runner(console, launcher);
   App app(tasks, registry, loader, runner, console);
   app.run();
 }

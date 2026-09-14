@@ -1,14 +1,15 @@
 #pragma once
 #include "../utils/Console.hpp"
 #include "Command.hpp"
+#include "TerminalLauncher.hpp"
 #include <vector>
 
 class CommandRunner {
 public:
-  CommandRunner(Console &console);
+  CommandRunner(Console &console, TerminalLauncher &launcher);
 
   int run(Command command);
-  void launchTerminal(Command command);
+  int launchTerminal(Command command);
 
   ~CommandRunner();
 
@@ -20,4 +21,5 @@ private:
   bool debugCommands = false;
   std::vector<int> backgroundJobs;
   Console &console;
+  TerminalLauncher &launcher;
 };

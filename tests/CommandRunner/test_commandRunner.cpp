@@ -1,4 +1,5 @@
 #include "../../src/CommandRunner/CommandRunner.hpp"
+#include "../../src/CommandRunner/Terminal/Dummy.cpp"
 #include "catch2/catch_test_macros.hpp"
 
 #include <array>
@@ -37,6 +38,11 @@ std::string readFile(const fs::path &path) {
   std::stringstream content;
   content << file.rdbuf();
   return content.str();
+}
+
+CommandRunner createRunner(Console &console) {
+  static Dummy launcher;
+  return CommandRunner(console, launcher);
 }
 } // namespace
 
@@ -77,7 +83,7 @@ TEST_CASE("runs every combination of Command use cases", "[CommandRunner]") {
       command.command = "pwd > '" + output.string() + "'";
     }
 
-    CommandRunner runner(console);
+    CommandRunner runner = createRunner(console);
     const int result = runner.run(command);
 
     if (options.background) {
@@ -100,7 +106,7 @@ TEST_CASE("runs every combination of Command use cases", "[CommandRunner]") {
 TEST_CASE("returns the command exit status", "[CommandRunner]") {
   std::ostringstream consoleOutput;
   Console console(consoleOutput);
-  CommandRunner runner(console);
+  CommandRunner runner = createRunner(console);
 
   REQUIRE(runner.run(Command{.command = "exit 42"}) == 42);
 }
@@ -109,7 +115,7 @@ TEST_CASE("reports an invalid working directory as a command failure",
           "[CommandRunner]") {
   std::ostringstream consoleOutput;
   Console console(consoleOutput);
-  CommandRunner runner(console);
+  CommandRunner runner = createRunner(console);
   Command command{.command = "true"};
   command.workingDirectory = "/path/that/does/not/exist";
 
@@ -119,7 +125,7 @@ TEST_CASE("reports an invalid working directory as a command failure",
 TEST_CASE("reports commands through Console", "[CommandRunner][Console]") {
   std::ostringstream output;
   Console console(output);
-  CommandRunner runner(console);
+  CommandRunner runner = createRunner(console);
 
   REQUIRE(runner.run(Command{.command = "true"}) == 0);
   REQUIRE(runner.run(Command{.command = "true", .envCommand = "export X=1"}) ==
@@ -133,7 +139,25 @@ TEST_CASE("reports commands through Console", "[CommandRunner][Console]") {
 TEST_CASE("returns a signal-based command status", "[CommandRunner]") {
   std::ostringstream output;
   Console console(output);
-  CommandRunner runner(console);
+  CommandRunner runner = createRunner(console);
 
   REQUIRE(runner.run(Command{.command = "kill -TERM $$"}) == 143);
+}
+
+TEST_CASE("envCommand affects the shell environment", "[CommandRunner]") {
+  std::ostringstream consoleOutput;
+  Console console(consoleOutput);
+  CommandRunner runner = createRunner(console);
+  const char *var = "PROJECT_MANAGER_TEST_FOO";
+  unsetenv(var);
+
+  const std::string checkEnv = "test \"$" + std::string(var) + "\" = \"1\"";
+
+  REQUIRE(runner.run(Command{.command = checkEnv}) != 0);
+
+  REQUIRE(runner.run(Command{.command = checkEnv,
+                             .envCommand =
+                                 "export PROJECT_MANAGER_TEST_FOO=1"}) == 0);
+
+  REQUIRE(getenv(var) == nullptr);
 }
