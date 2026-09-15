@@ -64,12 +64,14 @@ Usage: pm [command_1] [args...] [command_2] [args...] ...
 ### Examples
 
 ```bash
-pm help
-pm build run
-pm add my_project ~/code/my_project
-pm list
-pm list-names open my_project
-pm script test_script
+pm add gamepad-shell $(pwd)   # register the current directory as a project
+pm list                       # list all registered projects
+pm open gamepad-shell         # open it in the configured terminals and editor
+pm build                      # build the current project
+pm build run                  # build, then run
+pm script clean build         # chain two named scripts
+pm build script test          # build, then run the test script
+pm remove test                # remove a project
 ```
 
 ## Configuration
@@ -112,7 +114,7 @@ command = python scripts/merge.py
 To register a project with `open`/`build`/`run`/`script`, add it first:
 
 ```bash
-pm add my_project ~/code/my_project
+pm add myproj $(pwd)
 ```
 
 ## Testing

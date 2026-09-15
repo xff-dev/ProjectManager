@@ -99,9 +99,11 @@ Chaining Commands:
   They will be parsed and executed in the order provided.
 
 Examples:
+  {0} add myproj $(pwd)
+  {0} open myproj
   {0} build run
-  {0} add my_project ./path/to/project script test_script
-  {0} list-names open my_project
+  {0} build script test
+  {0} script clean build
 )";
 
 } // namespace consts
