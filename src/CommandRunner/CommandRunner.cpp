@@ -1,6 +1,7 @@
 #include "CommandRunner.hpp"
 #include "Command.hpp"
 #include "TerminalLauncher.hpp"
+#include <algorithm>
 #include <fcntl.h>
 #include <filesystem>
 #include <optional>
@@ -12,8 +13,9 @@
 #include <unistd.h>
 #include <vector>
 
-CommandRunner::CommandRunner(Console &console, TerminalLauncher &launcher)
-    : console(console), launcher(launcher) {}
+CommandRunner::CommandRunner(Console &console,
+                             std::unique_ptr<TerminalLauncher> launcher)
+    : console(console), launcher(std::move(launcher)) {}
 
 CommandRunner::~CommandRunner() {
   for (pid_t pid : backgroundJobs) {
@@ -97,7 +99,7 @@ int CommandRunner::runCommand(Command command) {
 }
 
 int CommandRunner::launchTerminal(Command command) {
-  return launcher.launch(command);
+  return launcher->launch(command);
 }
 
 void CommandRunner::printCommand(Command command) {

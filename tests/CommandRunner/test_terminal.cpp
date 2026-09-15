@@ -20,8 +20,7 @@ TEMPLATE_LIST_TEST_CASE(
 
   std::ostringstream consoleOutput;
   Console console(consoleOutput);
-  TestType launcher;
-  CommandRunner runner(console, launcher);
+  CommandRunner runner(console, std::make_unique<TestType>());
   ScopedTerminal terminal(runner.launchTerminal(command));
 
   REQUIRE(waitForFile(output));
@@ -51,8 +50,7 @@ TEMPLATE_LIST_TEST_CASE("real terminal applies envCommand before running the "
 
   std::ostringstream consoleOutput;
   Console console(consoleOutput);
-  TestType launcher;
-  CommandRunner runner(console, launcher);
+  CommandRunner runner(console, std::make_unique<TestType>());
   ScopedTerminal terminal(runner.launchTerminal(command));
 
   REQUIRE(waitForFile(output));
@@ -83,8 +81,7 @@ TEMPLATE_LIST_TEST_CASE("real terminal without envCommand inherits the parent "
 
   std::ostringstream consoleOutput;
   Console console(consoleOutput);
-  TestType launcher;
-  CommandRunner runner(console, launcher);
+  CommandRunner runner(console, std::make_unique<TestType>());
   ScopedTerminal terminal(runner.launchTerminal(command));
 
   REQUIRE(waitForFile(output));
@@ -115,8 +112,7 @@ TEMPLATE_LIST_TEST_CASE("real terminal envCommand steers the executed command",
 
   std::ostringstream consoleOutput;
   Console console(consoleOutput);
-  TestType launcher;
-  CommandRunner runner(console, launcher);
+  CommandRunner runner(console, std::make_unique<TestType>());
   ScopedTerminal terminal(runner.launchTerminal(command));
 
   REQUIRE(waitForFile(flagOn));
@@ -138,8 +134,7 @@ TEMPLATE_LIST_TEST_CASE("real terminal executes a command without a "
 
   std::ostringstream consoleOutput;
   Console console(consoleOutput);
-  TestType launcher;
-  CommandRunner runner(console, launcher);
+  CommandRunner runner(console, std::make_unique<TestType>());
   ScopedTerminal terminal(runner.launchTerminal(command));
 
   REQUIRE(waitForFile(output));

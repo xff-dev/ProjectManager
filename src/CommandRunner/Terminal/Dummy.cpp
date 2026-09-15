@@ -6,7 +6,4 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-class Dummy final : public TerminalLauncher {
-public:
-  int launch(const Command &command) { return -1; }
-};
+int Dummy::launch(const Command &command) { return 0; }

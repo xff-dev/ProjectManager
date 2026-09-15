@@ -1,14 +1,18 @@
 #include "App/App.hpp"
 #include "CLI/CLI.hpp"
 #include "CommandRunner/CommandRunner.hpp"
-#include "CommandRunner/Terminal/Ghostty.cpp"
+#include "CommandRunner/TerminalLauncher.hpp"
 #include "Project/ConfigLoader.hpp"
 #include "Project/Registry.hpp"
 #include "utils/Console.hpp"
+#include "utils/consts.hpp"
+#include <cstdlib>
 #include <filesystem>
 #include <iostream>
+#include <memory>
 #include <pwd.h>
 #include <stdexcept>
+#include <string>
 #include <sys/types.h>
 #include <unistd.h>
 
@@ -25,10 +29,16 @@ int main(int argc, char **argv) {
 
   Console console(std::cout);
 
+  std::string terminal = getenv("TERM");
+  std::unique_ptr<TerminalLauncher> launcher = getTerminalLauncher(terminal);
+
   try {
+    if (dynamic_cast<Dummy *>(launcher.get()) != nullptr) {
+      throw std::runtime_error(std::string(consts::errors::UnknownTerminal));
+    }
+
     ConfigLoader loader;
-    GhosttyLauncher launcher;
-    CommandRunner runner(console, launcher);
+    CommandRunner runner(console, std::move(launcher));
 
     CLI cli(argc, argv);
     auto cliResult = cli.parse();
@@ -38,7 +48,7 @@ int main(int argc, char **argv) {
 
     App app(cliResult.tasks, registry, loader, runner, console);
     app.run();
-  } catch (std::runtime_error e) {
+  } catch (std::runtime_error &e) {
     console.error(e.what());
   }
 

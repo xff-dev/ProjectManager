@@ -1,8 +1,7 @@
 #pragma once
 
 #include "../../src/CommandRunner/Command.hpp"
-#include "../../src/CommandRunner/Terminal/Ghostty.cpp"
-#include "../../src/CommandRunner/Terminal/Kitty.cpp"
+#include "../../src/CommandRunner/TerminalLauncher.hpp"
 
 #include "catch2/catch_template_test_macros.hpp"
 #include "catch2/catch_test_macros.hpp"

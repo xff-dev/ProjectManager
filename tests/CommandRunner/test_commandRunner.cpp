@@ -1,5 +1,4 @@
 #include "../../src/CommandRunner/CommandRunner.hpp"
-#include "../../src/CommandRunner/Terminal/Dummy.cpp"
 #include "catch2/catch_test_macros.hpp"
 
 #include <array>
@@ -41,8 +40,7 @@ std::string readFile(const fs::path &path) {
 }
 
 CommandRunner createRunner(Console &console) {
-  static Dummy launcher;
-  return CommandRunner(console, launcher);
+  return CommandRunner(console, std::make_unique<Dummy>());
 }
 } // namespace
 
@@ -133,7 +131,6 @@ TEST_CASE("reports commands through Console", "[CommandRunner][Console]") {
 
   REQUIRE(output.str().find("export X=1") != std::string::npos);
   REQUIRE(output.str().find("true") != std::string::npos);
-
 }
 
 TEST_CASE("returns a signal-based command status", "[CommandRunner]") {
@@ -155,9 +152,9 @@ TEST_CASE("envCommand affects the shell environment", "[CommandRunner]") {
 
   REQUIRE(runner.run(Command{.command = checkEnv}) != 0);
 
-  REQUIRE(runner.run(Command{.command = checkEnv,
-                             .envCommand =
-                                 "export PROJECT_MANAGER_TEST_FOO=1"}) == 0);
+  REQUIRE(runner.run(
+              Command{.command = checkEnv,
+                      .envCommand = "export PROJECT_MANAGER_TEST_FOO=1"}) == 0);
 
   REQUIRE(getenv(var) == nullptr);
 }

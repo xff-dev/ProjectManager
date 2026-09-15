@@ -63,6 +63,8 @@ inline constexpr std::string_view ProjectAlreadyExists =
 
 inline constexpr std::string_view InvalidProjectPath =
     "Project directory doesn't exist(disk not mounted?)";
+
+inline constexpr std::string_view UnknownTerminal = "Unknown terminal";
 } // namespace errors
 
 namespace success {
