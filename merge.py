@@ -1,3 +1,5 @@
+# used to merge all source files into a single file for easier code review by an LLM 
+
 import os
 
 OUTPUT_FILE = "all_code.txt"

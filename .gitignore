@@ -3,6 +3,7 @@ include/
 qtcreator
 .vscode
 build/ 
+build-coverage/
 cmake-build-debug/ 
 cmake-build-release/ 
 external/ 
