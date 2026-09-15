@@ -98,7 +98,7 @@ command = make -j12
 command = ./build/unit_tests "~[terminal]"
 
 [script_dump]
-command = python merge.py
+command = python scripts/merge.py
 ```
 
 - `[data]` — `editorCommand`, `lang` (used for the icon in `pm list`), and
