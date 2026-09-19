@@ -1,13 +1,15 @@
 #pragma once
 
+#include "DatabaseHandler/DatabaseHandler.hpp"
 #include "Project.hpp"
 #include <filesystem>
+#include <memory>
 #include <string>
 #include <vector>
 
 class Registry {
 public:
-  Registry(std::filesystem::path databasePath);
+  Registry(std::unique_ptr<DatabaseHandler> databaseHandler);
 
   Project &find(const std::string &name);
   Project &findByPath(const std::filesystem::path &path);
@@ -22,5 +24,6 @@ public:
 
 private:
   std::vector<Project> projects;
-  std::filesystem::path databasePath;
+
+  std::unique_ptr<DatabaseHandler> databaseHandler;
 };

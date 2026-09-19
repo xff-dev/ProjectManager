@@ -15,15 +15,17 @@ FetchContent_MakeAvailable(inipp)
 FetchContent_Declare(Catch2 GIT_REPOSITORY https://github.com/catchorg/Catch2.git GIT_TAG v3.4.0)
 FetchContent_MakeAvailable(Catch2)
 
+FetchContent_Declare(tomlplusplus GIT_REPOSITORY https://github.com/marzer/tomlplusplus.git GIT_TAG v3.4.0)
+FetchContent_MakeAvailable(tomlplusplus)
 
 file(GLOB_RECURSE LIB_SOURCES CONFIGURE_DEPENDS src/*.cpp)
 list(FILTER LIB_SOURCES EXCLUDE REGEX "src/main.cpp") 
 
 add_library(pm-logic STATIC ${LIB_SOURCES})
-target_link_libraries(pm-logic PUBLIC inipp::inipp)
+target_link_libraries(pm-logic PUBLIC inipp::inipp tomlplusplus)
 
 add_executable(pm src/main.cpp)
-target_link_libraries(pm PRIVATE  pm-logic)
+target_link_libraries(pm PRIVATE pm-logic)
 
 
 file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS tests/*.cpp)

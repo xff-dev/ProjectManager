@@ -4,6 +4,7 @@
 #include "../test_helpers.hpp"
 #include <filesystem>
 #include <fstream>
+#include <memory>
 #include <optional>
 #include <ostream>
 #include <string>
@@ -98,7 +99,8 @@ inline void configureScript(const TestEnv &env, const std::string &name,
 }
 
 struct AppFixture {
-  explicit AppFixture(const TestEnv &env) : registry(env.dbPath) {
+  explicit AppFixture(const TestEnv &env)
+      : registry(std::make_unique<LegacyParser>(env.dbPath)) {
     registry.load();
   }
 

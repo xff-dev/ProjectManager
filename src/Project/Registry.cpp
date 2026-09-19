@@ -1,14 +1,16 @@
 #include "Registry.hpp"
 #include "../utils/consts.hpp"
+#include "DatabaseHandler/DatabaseHandler.hpp"
 #include "Project.hpp"
 #include <algorithm>
 #include <filesystem>
 #include <fstream>
+#include <memory>
 #include <stdexcept>
 #include <string>
 
-Registry::Registry(std::filesystem::path databasePath)
-    : databasePath(databasePath) {}
+Registry::Registry(std::unique_ptr<DatabaseHandler> databaseHandler)
+    : databaseHandler(std::move(databaseHandler)) {}
 
 Project &Registry::find(const std::string &name) {
   for (auto &project : projects) {
@@ -29,34 +31,9 @@ Project &Registry::findByPath(const std::filesystem::path &path) {
   throw std::runtime_error(std::string(consts::errors::ProjectNotFound));
 }
 
-void Registry::load() {
-  std::ifstream file;
-  file.open(std::filesystem::absolute(databasePath), std::ios::in);
+void Registry::load() { projects = databaseHandler->load(); }
 
-  std::string line;
-
-  while (std::getline(file, line)) {
-    auto pos = line.find('|');
-
-    std::string name = line.substr(0, pos);
-    std::string path = line.substr(pos + 1);
-
-    Project project = Project(path, name);
-
-    projects.push_back(project);
-  }
-}
-
-void Registry::save() {
-  std::ofstream file;
-  file.open(databasePath);
-
-  for (auto &project : projects) {
-    file << project.name << "|" << project.path.string() << std::endl;
-  }
-
-  file.close();
-}
+void Registry::save() { databaseHandler->save(projects); }
 
 void Registry::remove(const std::string &name) {
   auto it =

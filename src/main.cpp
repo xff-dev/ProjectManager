@@ -3,9 +3,12 @@
 #include "CommandRunner/CommandRunner.hpp"
 #include "CommandRunner/TerminalLauncher.hpp"
 #include "Project/ConfigLoader.hpp"
+#include "Project/DatabaseHandler/DatabaseHandler.hpp"
 #include "Project/Registry.hpp"
+#include "toml++/toml.hpp"
 #include "utils/Console.hpp"
 #include "utils/consts.hpp"
+#include <algorithm>
 #include <cstdlib>
 #include <filesystem>
 #include <iostream>
@@ -33,9 +36,9 @@ int main(int argc, char **argv) {
   std::unique_ptr<TerminalLauncher> launcher = getTerminalLauncher(terminal);
 
   try {
-    if (dynamic_cast<Dummy *>(launcher.get()) != nullptr) {
-      throw std::runtime_error(std::string(consts::errors::UnknownTerminal));
-    }
+    // if (dynamic_cast<Dummy *>(launcher.get()) != nullptr) {
+    //   throw std::runtime_error(std::string(consts::errors::UnknownTerminal));
+    // }
 
     ConfigLoader loader;
     CommandRunner runner(console, std::move(launcher));
@@ -43,7 +46,10 @@ int main(int argc, char **argv) {
     CLI cli(argc, argv);
     auto cliResult = cli.parse();
 
-    Registry registry(projectsDatabasePath);
+    std::unique_ptr<DatabaseHandler> databaseHandler =
+        std::make_unique<LegacyParser>(projectsDatabasePath);
+
+    Registry registry(std::move(databaseHandler));
     registry.load();
 
     App app(cliResult.tasks, registry, loader, runner, console);
