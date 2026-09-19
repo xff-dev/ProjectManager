@@ -2,7 +2,7 @@
 #include <fstream>
 #include <vector>
 
-std::vector<Project> LegacyParser::load() {
+std::vector<Project> LegacyDatabase::load() {
   std::vector<Project> projects;
 
   std::ifstream file;
@@ -26,7 +26,7 @@ std::vector<Project> LegacyParser::load() {
   return projects;
 }
 
-void LegacyParser::save(std::vector<Project> &projects) {
+void LegacyDatabase::save(std::vector<Project> &projects) {
   std::ofstream file;
   file.open(databasePath);
 

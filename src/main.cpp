@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
     auto cliResult = cli.parse();
 
     std::unique_ptr<DatabaseHandler> databaseHandler =
-        std::make_unique<LegacyParser>(projectsDatabasePath);
+        std::make_unique<LegacyDatabase>(projectsDatabasePath);
 
     Registry registry(std::move(databaseHandler));
     registry.load();

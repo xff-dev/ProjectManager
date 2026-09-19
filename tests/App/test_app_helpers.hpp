@@ -100,7 +100,7 @@ inline void configureScript(const TestEnv &env, const std::string &name,
 
 struct AppFixture {
   explicit AppFixture(const TestEnv &env)
-      : registry(std::make_unique<LegacyParser>(env.dbPath)) {
+      : registry(std::make_unique<LegacyDatabase>(env.dbPath)) {
     registry.load();
   }
 

@@ -31,7 +31,7 @@ std::vector<std::string> readLines(const fs::path &path) {
 TEST_CASE("registry reports missing projects", "[Registry][error]") {
   const auto database = testDatabasePath("missing");
   std::ofstream(database).close();
-  Registry registry(std::make_unique<LegacyParser>(database));
+  Registry registry(std::make_unique<LegacyDatabase>(database));
   registry.load();
 
   REQUIRE_THROWS_WITH(registry.find("unknown"),
@@ -44,7 +44,7 @@ TEST_CASE("registry reports missing projects", "[Registry][error]") {
 TEST_CASE("registry reports duplicate project names", "[Registry][error]") {
   const auto database = testDatabasePath("duplicate");
   std::ofstream(database).close();
-  Registry registry(std::make_unique<LegacyParser>(database));
+  Registry registry(std::make_unique<LegacyDatabase>(database));
   registry.load();
   Project first{fs::temp_directory_path() / "first", "project"};
   Project duplicate{fs::temp_directory_path() / "second", "project"};
@@ -55,23 +55,26 @@ TEST_CASE("registry reports duplicate project names", "[Registry][error]") {
   fs::remove(database);
 }
 
-TEST_CASE("registry persists projects and finds equivalent paths", "[Registry]") {
+TEST_CASE("registry persists projects and finds equivalent paths",
+          "[Registry]") {
   const auto database = testDatabasePath("round-trip");
   const auto projectDirectory =
-      fs::temp_directory_path() / ("registry-project-" + std::to_string(getpid()));
+      fs::temp_directory_path() /
+      ("registry-project-" + std::to_string(getpid()));
   fs::remove_all(projectDirectory);
   fs::create_directories(projectDirectory);
   std::ofstream(database).close();
 
-  Registry registry(std::make_unique<LegacyParser>(database));
+  Registry registry(std::make_unique<LegacyDatabase>(database));
   registry.load();
   Project project{projectDirectory, "project"};
   registry.add(project);
 
-  Registry reloaded(std::make_unique<LegacyParser>(database));
+  Registry reloaded(std::make_unique<LegacyDatabase>(database));
   reloaded.load();
   REQUIRE(reloaded.getProjects().size() == 1);
-  REQUIRE(std::filesystem::weakly_canonical(reloaded.find("project").path) == std::filesystem::weakly_canonical(projectDirectory));
+  REQUIRE(std::filesystem::weakly_canonical(reloaded.find("project").path) ==
+          std::filesystem::weakly_canonical(projectDirectory));
   REQUIRE(reloaded.findByPath(projectDirectory / ".").name == "project");
 
   fs::remove(database);
@@ -88,7 +91,7 @@ TEST_CASE("registry stays consistent after loading the database twice",
   fs::create_directories(projectDirectory);
   std::ofstream(database) << "project|" << projectDirectory.string() << "\n";
 
-  Registry registry(std::make_unique<LegacyParser>(database));
+  Registry registry(std::make_unique<LegacyDatabase>(database));
   registry.load();
   registry.load();
 
@@ -105,7 +108,7 @@ TEST_CASE("registry stays consistent after loading the database twice",
 TEST_CASE("loading an empty database twice stays empty", "[Registry]") {
   const auto database = testDatabasePath("empty-reload");
   std::ofstream(database).close();
-  Registry registry(std::make_unique<LegacyParser>(database));
+  Registry registry(std::make_unique<LegacyDatabase>(database));
   registry.load();
   registry.load();
   REQUIRE(registry.getProjects().empty());
@@ -124,7 +127,7 @@ TEST_CASE("loading the database twice does not duplicate projects in memory",
   fs::create_directories(projectDirectory);
   std::ofstream(database) << "project|" << projectDirectory.string() << "\n";
 
-  Registry registry(std::make_unique<LegacyParser>(database));
+  Registry registry(std::make_unique<LegacyDatabase>(database));
   registry.load();
   registry.load();
 
@@ -143,7 +146,7 @@ TEST_CASE("saving after a double load writes each project once", "[Registry]") {
   fs::create_directories(projectDirectory);
   std::ofstream(database) << "project|" << projectDirectory.string() << "\n";
 
-  Registry registry(std::make_unique<LegacyParser>(database));
+  Registry registry(std::make_unique<LegacyDatabase>(database));
   registry.load();
   registry.load();
   registry.save();
@@ -167,7 +170,7 @@ TEST_CASE("removing a project after a double load leaves no duplicates on disk",
   fs::create_directories(projectDirectory);
   std::ofstream(database) << "project|" << projectDirectory.string() << "\n";
 
-  Registry registry(std::make_unique<LegacyParser>(database));
+  Registry registry(std::make_unique<LegacyDatabase>(database));
   registry.load();
   registry.load();
   registry.remove("project");
@@ -178,14 +181,15 @@ TEST_CASE("removing a project after a double load leaves no duplicates on disk",
   fs::remove_all(projectDirectory);
 }
 
-TEST_CASE("registry reports a path that belongs to no project", "[Registry][error]") {
+TEST_CASE("registry reports a path that belongs to no project",
+          "[Registry][error]") {
   const auto database = testDatabasePath("missing-path");
   std::ofstream(database).close();
-  Registry registry(std::make_unique<LegacyParser>(database));
+  Registry registry(std::make_unique<LegacyDatabase>(database));
   registry.load();
 
-  REQUIRE_THROWS_WITH(registry.findByPath(fs::temp_directory_path() /
-                                          "unregistered-project"),
-                      Catch::Matchers::ContainsSubstring("Project"));
+  REQUIRE_THROWS_WITH(
+      registry.findByPath(fs::temp_directory_path() / "unregistered-project"),
+      Catch::Matchers::ContainsSubstring("Project"));
   fs::remove(database);
 }

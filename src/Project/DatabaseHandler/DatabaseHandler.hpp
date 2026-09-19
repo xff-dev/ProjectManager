@@ -17,9 +17,9 @@ protected:
   std::filesystem::path databasePath;
 };
 
-class LegacyParser : public DatabaseHandler {
+class LegacyDatabase : public DatabaseHandler {
 public:
-  LegacyParser(std::filesystem::path databasePath)
+  LegacyDatabase(std::filesystem::path databasePath)
       : DatabaseHandler(databasePath) {};
 
   std::vector<Project> load();
