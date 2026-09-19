@@ -31,6 +31,8 @@ CLIResult CLI::parse() {
       result.tasks.push_back(parseOpenTask());
     } else if (arg == "help") {
       result.tasks.push_back(parseHelpTask());
+    } else if (arg == "migrate") {
+      result.tasks.push_back(parseMigrateTask());
     } else {
       throw std::runtime_error(
           std::format(consts::errors::UnknownCommand, arg, argv[0]));
@@ -108,4 +110,20 @@ OpenTask CLI::parseOpenTask() {
 HelpTask CLI::parseHelpTask() {
   argn++;
   return HelpTask{argv[0]};
+}
+
+MigrateTask CLI::parseMigrateTask() {
+  argn++;
+  if (argn >= argc) {
+    throw std::runtime_error(
+        std::string(consts::errors::MissingMigrationSource));
+  }
+  std::string from = argv[argn++];
+  if (argn >= argc) {
+    throw std::runtime_error(
+        std::string(consts::errors::MissingMigrationDestination));
+  }
+  std::string to = argv[argn++];
+
+  return MigrateTask{from, to};
 }

@@ -24,6 +24,7 @@ private:
   void handleTask(AddTask &task);
   void handleTask(OpenTask &task);
   void handleTask(HelpTask &task);
+  void handleTask(MigrateTask &task);
 
 private:
   std::vector<Task> tasks;

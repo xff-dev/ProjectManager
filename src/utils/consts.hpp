@@ -54,6 +54,11 @@ inline constexpr std::string_view MissingProjectName = "Missing project name";
 inline constexpr std::string_view MissingProjectPath = "Missing project path";
 inline constexpr std::string_view MissingScriptName = "Missing script name";
 
+inline constexpr std::string_view MissingMigrationSource =
+    "Missing source file for migration";
+inline constexpr std::string_view MissingMigrationDestination =
+    "Missing destination file for migration";
+
 inline constexpr std::string_view BuildPreparationError =
     "Error preparing build";
 inline constexpr std::string_view BuildError = "Error building";
@@ -65,6 +70,11 @@ inline constexpr std::string_view InvalidProjectPath =
     "Project directory doesn't exist(disk not mounted?)";
 
 inline constexpr std::string_view UnknownTerminal = "Unknown terminal";
+
+inline constexpr std::string_view DatabaseParseError =
+    "Error parsing projects database";
+inline constexpr std::string_view MalformedDatabaseFile =
+    "Malformed database file";
 } // namespace errors
 
 namespace success {
@@ -73,6 +83,7 @@ inline constexpr std::string_view RunSuccessful = "Run successful";
 
 inline constexpr std::string_view ScriptSuccessful =
     "Script \"{}\" ran successfuly";
+
 } // namespace success
 
 namespace warnings {

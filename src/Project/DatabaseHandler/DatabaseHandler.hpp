@@ -25,3 +25,12 @@ public:
   std::vector<Project> load();
   void save(std::vector<Project> &projects);
 };
+
+class TomlDatabase : public DatabaseHandler {
+public:
+  TomlDatabase(std::filesystem::path databasePath)
+      : DatabaseHandler(databasePath) {};
+
+  std::vector<Project> load();
+  void save(std::vector<Project> &projects);
+};

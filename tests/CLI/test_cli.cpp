@@ -130,3 +130,24 @@ TEST_CASE("HelpTask keeps the invoked application name", "[CLI]") {
   REQUIRE(std::holds_alternative<HelpTask>(tasks.front()));
   CHECK(std::get<HelpTask>(tasks.front()).appName == "custom-pm");
 }
+
+TEST_CASE("MigrateTask", "[CLI]") {
+  auto tasks = parseArgs({"pm", "migrate", "/data/legacy", "/data/data.toml"});
+
+  REQUIRE(tasks.size() == 1);
+  REQUIRE(std::holds_alternative<MigrateTask>(tasks[0]));
+
+  const auto &migrate = std::get<MigrateTask>(tasks[0]);
+  CHECK(migrate.from == std::filesystem::path("/data/legacy"));
+  CHECK(migrate.to == std::filesystem::path("/data/data.toml"));
+}
+
+TEST_CASE("MigrateTask missing source throws", "[CLI]") {
+  REQUIRE_THROWS_WITH(parseArgs({"pm", "migrate"}),
+                      Catch::Matchers::ContainsSubstring("source"));
+}
+
+TEST_CASE("MigrateTask missing destination throws", "[CLI]") {
+  REQUIRE_THROWS_WITH(parseArgs({"pm", "migrate", "/data/legacy"}),
+                      Catch::Matchers::ContainsSubstring("destination"));
+}

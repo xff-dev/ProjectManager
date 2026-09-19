@@ -5,10 +5,7 @@
 #include "Project/ConfigLoader.hpp"
 #include "Project/DatabaseHandler/DatabaseHandler.hpp"
 #include "Project/Registry.hpp"
-#include "toml++/toml.hpp"
 #include "utils/Console.hpp"
-#include "utils/consts.hpp"
-#include <algorithm>
 #include <cstdlib>
 #include <filesystem>
 #include <iostream>
@@ -28,7 +25,7 @@ int main(int argc, char **argv) {
 
   std::filesystem::path projectsDataPath =
       std::filesystem::path(homedir) / ".project-manager/";
-  std::filesystem::path projectsDatabasePath = projectsDataPath / "data";
+  std::filesystem::path projectsDatabasePath = projectsDataPath / "data.toml";
 
   Console console(std::cout);
 
@@ -47,7 +44,7 @@ int main(int argc, char **argv) {
     auto cliResult = cli.parse();
 
     std::unique_ptr<DatabaseHandler> databaseHandler =
-        std::make_unique<LegacyDatabase>(projectsDatabasePath);
+        std::make_unique<TomlDatabase>(projectsDatabasePath);
 
     Registry registry(std::move(databaseHandler));
     registry.load();

@@ -32,9 +32,14 @@ struct HelpTask {
   std::string appName;
 };
 
-using Task =
-    std::variant<BuildTask, RunTask, ListTask, ListNamesTask, ScriptTask,
-                 ListScriptsTask, RemoveTask, AddTask, OpenTask, HelpTask>;
+struct MigrateTask {
+  std::filesystem::path from;
+  std::filesystem::path to;
+};
+
+using Task = std::variant<BuildTask, RunTask, ListTask, ListNamesTask,
+                          ScriptTask, ListScriptsTask, RemoveTask, AddTask,
+                          OpenTask, HelpTask, MigrateTask>;
 
 struct CLIResult {
   std::vector<Task> tasks;
@@ -57,6 +62,7 @@ private:
   AddTask parseAddTask();
   OpenTask parseOpenTask();
   HelpTask parseHelpTask();
+  MigrateTask parseMigrateTask();
 
 private:
   int argn = 1;
