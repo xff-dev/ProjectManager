@@ -7,7 +7,7 @@ project-specific scripts — all from a single command.
 ## Features
 
 - **Project registry** — add, remove, list, and search projects by name or path,
-  persisted in `~/.project-manager/data`.
+  persisted as toml in `~/.project-manager/data.toml`.
 - **Per-project config** — each project carries a `project.ini` describing its
   language, editor command, environment command, build/run commands, terminals,
   and named scripts.
@@ -59,6 +59,7 @@ Usage: pm [command_1] [args...] [command_2] [args...] ...
 | `add <name> <path>`    | Add a new project.                                 |
 | `remove <name>`        | Remove a project.                                  |
 | `open <name>`          | Open the project in its terminals and editor.      |
+| `migrate <src> <dst>`  | Convert the legacy registry database to toml.      |
 | `help`                 | Show this help.                                    |
 
 ### Examples
@@ -73,6 +74,20 @@ pm script clean build         # chain two named scripts
 pm build script test          # build, then run the test script
 pm remove test                # remove a project
 ```
+
+### Data storage
+
+The registry is stored as toml in `~/.project-manager/data.toml`
+(`[[projects]]` entries with `name`/`path` fields). Older versions kept it in a
+legacy `name|path` file at `~/.project-manager/data`; convert it once with:
+
+```bash
+pm migrate ~/.project-manager/data ~/.project-manager/data.toml
+```
+
+`migrate` reads the legacy file and writes a toml database; the source file is
+left untouched. The registry reader is swappable behind a small
+`DatabaseHandler` interface (legacy and toml backends).
 
 ## Configuration
 
@@ -151,7 +166,7 @@ src/
   App/            Command dispatch and task handlers (build, run, open, ...)
   CLI/            Argument parsing and task definitions
   CommandRunner/  Shell command execution and terminal launching
-  Project/        Registry and project.ini loading
+  Project/        Registry (DatabaseHandler backends) and project.ini loading
   utils/          Console helpers, ANSI colors, icons, constants
 tests/
   ...             Catch2 test suite

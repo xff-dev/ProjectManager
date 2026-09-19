@@ -14,6 +14,7 @@ _pm() {
     'remove:Remove a project'
     'add:Add a new project'
     'open:Open a project'
+    'migrate:Convert the legacy database to the toml format'
   )
 
   if [[ "$prev_word" == "script" ]]; then
@@ -28,6 +29,8 @@ _pm() {
     _message -e names 'Project name'
   elif [[ "$prev2_word" == "add" ]]; then
     _files -/
+  elif [[ "$prev_word" == "migrate" || "$prev2_word" == "migrate" ]]; then
+    _files
   else
     _describe -t commands 'pm command' commands
   fi

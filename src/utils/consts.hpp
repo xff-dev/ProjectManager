@@ -104,6 +104,7 @@ Commands:
   remove <name>     Remove a project by its name.
   add <name> <path> Add a new project with the given name and directory path.
   open <name>       Open a project by its name.
+  migrate <from> <to> Convert the legacy database to the toml format.
 
 Chaining Commands:
   Multiple commands can be passed sequentially in a single invocation. 
