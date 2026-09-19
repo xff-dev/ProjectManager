@@ -6,6 +6,7 @@
 #include "Project/DatabaseHandler/DatabaseHandler.hpp"
 #include "Project/Registry.hpp"
 #include "utils/Console.hpp"
+#include "utils/consts.hpp"
 #include <cstdlib>
 #include <filesystem>
 #include <iostream>
@@ -15,6 +16,7 @@
 #include <string>
 #include <sys/types.h>
 #include <unistd.h>
+#include <variant>
 
 int main(int argc, char **argv) {
   const char *homedir;
@@ -33,15 +35,20 @@ int main(int argc, char **argv) {
   std::unique_ptr<TerminalLauncher> launcher = getTerminalLauncher(terminal);
 
   try {
-    // if (dynamic_cast<Dummy *>(launcher.get()) != nullptr) {
-    //   throw std::runtime_error(std::string(consts::errors::UnknownTerminal));
-    // }
+    CLI cli(argc, argv);
+    auto cliResult = cli.parse();
+
+    if (dynamic_cast<Dummy *>(launcher.get()) != nullptr) {
+      for (auto &task : cliResult.tasks) {
+        if (std::holds_alternative<OpenTask>(task)) {
+          throw std::runtime_error(
+              std::string(consts::errors::UnknownTerminal));
+        }
+      }
+    }
 
     ConfigLoader loader;
     CommandRunner runner(console, std::move(launcher));
-
-    CLI cli(argc, argv);
-    auto cliResult = cli.parse();
 
     std::unique_ptr<DatabaseHandler> databaseHandler =
         std::make_unique<TomlDatabase>(projectsDatabasePath);

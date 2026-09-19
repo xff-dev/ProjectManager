@@ -19,7 +19,6 @@ private:
   void printCommand(Command command);
 
 private:
-  bool debugCommands = false;
   std::vector<int> backgroundJobs;
   Console &console;
   std::unique_ptr<TerminalLauncher> launcher;

@@ -1,8 +1,5 @@
 #pragma once
-#include "../utils/Console.hpp"
 #include "Command.hpp"
-#include <string>
-#include <string_view>
 
 class TerminalLauncher {
 public:
@@ -11,7 +8,7 @@ public:
   virtual int launch(const Command &command) = 0;
 };
 
-std::unique_ptr<TerminalLauncher> getTerminalLauncher(std::string name);
+std::unique_ptr<TerminalLauncher> getTerminalLauncher(std::string_view name);
 
 class Dummy : public TerminalLauncher {
 public:

@@ -1,7 +1,6 @@
 #include "CommandRunner.hpp"
 #include "Command.hpp"
 #include "TerminalLauncher.hpp"
-#include <algorithm>
 #include <fcntl.h>
 #include <filesystem>
 #include <optional>

@@ -10,8 +10,6 @@ std::vector<Project> LegacyDatabase::load() {
 
   std::string line;
 
-  projects.erase(projects.begin(), projects.end());
-
   while (std::getline(file, line)) {
     auto pos = line.find('|');
 

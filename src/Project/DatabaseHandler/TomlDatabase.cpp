@@ -2,7 +2,6 @@
 #include "DatabaseHandler.hpp"
 #include <filesystem>
 #include <fstream>
-#include <iterator>
 #include <stdexcept>
 #include <string>
 #include <toml++/impl/forward_declarations.hpp>
@@ -20,7 +19,7 @@ std::vector<Project> TomlDatabase::load() {
 
   try {
     config = toml::parse_file(databasePath.string());
-  } catch (const toml::parse_error error) {
+  } catch (const toml::parse_error &error) {
     throw std::runtime_error(std::string(consts::errors::DatabaseParseError));
   }
 

@@ -3,7 +3,7 @@
 #include <memory>
 #include <string>
 
-std::unique_ptr<TerminalLauncher> getTerminalLauncher(std::string name) {
+std::unique_ptr<TerminalLauncher> getTerminalLauncher(std::string_view name) {
   std::unique_ptr<TerminalLauncher> launcher = std::make_unique<Dummy>();
 
   std::string term_lower(name.size(), ' ');
