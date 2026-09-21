@@ -4,6 +4,7 @@
 #include <array>
 #include <chrono>
 #include <fstream>
+#include <iostream>
 #include <ostream>
 #include <sstream>
 #include <string>
@@ -48,7 +49,7 @@ TEST_CASE("runs every combination of Command use cases", "[CommandRunner]") {
   // Commands run in child processes, so their stdout/stderr remains outside
   // the injected Console. Verify their observable filesystem effects instead.
   std::ostringstream consoleOutput;
-  Console console(consoleOutput);
+  Console console(consoleOutput, std::cin);
   const std::array cases{
       CommandOptions{false, false, false}, CommandOptions{true, false, false},
       CommandOptions{false, true, false},  CommandOptions{true, true, false},
@@ -103,7 +104,7 @@ TEST_CASE("runs every combination of Command use cases", "[CommandRunner]") {
 
 TEST_CASE("returns the command exit status", "[CommandRunner]") {
   std::ostringstream consoleOutput;
-  Console console(consoleOutput);
+  Console console(consoleOutput, std::cin);
   CommandRunner runner = createRunner(console);
 
   REQUIRE(runner.run(Command{.command = "exit 42"}) == 42);
@@ -112,7 +113,7 @@ TEST_CASE("returns the command exit status", "[CommandRunner]") {
 TEST_CASE("reports an invalid working directory as a command failure",
           "[CommandRunner]") {
   std::ostringstream consoleOutput;
-  Console console(consoleOutput);
+  Console console(consoleOutput, std::cin);
   CommandRunner runner = createRunner(console);
   Command command{.command = "true"};
   command.workingDirectory = "/path/that/does/not/exist";
@@ -122,7 +123,7 @@ TEST_CASE("reports an invalid working directory as a command failure",
 
 TEST_CASE("reports commands through Console", "[CommandRunner][Console]") {
   std::ostringstream output;
-  Console console(output);
+  Console console(output, std::cin);
   CommandRunner runner = createRunner(console);
 
   REQUIRE(runner.run(Command{.command = "true"}) == 0);
@@ -135,7 +136,7 @@ TEST_CASE("reports commands through Console", "[CommandRunner][Console]") {
 
 TEST_CASE("returns a signal-based command status", "[CommandRunner]") {
   std::ostringstream output;
-  Console console(output);
+  Console console(output, std::cin);
   CommandRunner runner = createRunner(console);
 
   REQUIRE(runner.run(Command{.command = "kill -TERM $$"}) == 143);
@@ -143,7 +144,7 @@ TEST_CASE("returns a signal-based command status", "[CommandRunner]") {
 
 TEST_CASE("envCommand affects the shell environment", "[CommandRunner]") {
   std::ostringstream consoleOutput;
-  Console console(consoleOutput);
+  Console console(consoleOutput, std::cin);
   CommandRunner runner = createRunner(console);
   const char *var = "PROJECT_MANAGER_TEST_FOO";
   unsetenv(var);

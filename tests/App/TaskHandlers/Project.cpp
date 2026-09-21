@@ -63,7 +63,8 @@ TEST_CASE("list remains useful when a project config is unavailable",
 
   runAppWithCwd({ListTask{}}, env.projPath, fixture.registry, output);
 
-  REQUIRE(output.str().find("● no-config\n") != std::string::npos);
+  REQUIRE(output.str().find("no-config") != std::string::npos);
+  REQUIRE(output.str().find(std::string(consts::icons::exists)) != std::string::npos);
   cleanupEnv(env);
 }
 

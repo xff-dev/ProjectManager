@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
       std::filesystem::path(homedir) / ".project-manager/";
   std::filesystem::path projectsDatabasePath = projectsDataPath / "data.toml";
 
-  Console console(std::cout);
+  Console console(std::cout, std::cin);
 
   std::string terminal = getenv("TERM");
   std::unique_ptr<TerminalLauncher> launcher = getTerminalLauncher(terminal);

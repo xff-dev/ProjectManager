@@ -89,6 +89,8 @@ inline constexpr std::string_view ScriptSuccessful =
 namespace warnings {
 inline constexpr std::string_view NonZeroStatusCode =
     "Process exited with non-zero status code: {}";
+
+inline constexpr std::string_view InvalidConfirmationInput = "Invalid input";
 } // namespace warnings
 
 inline constexpr std::string_view HelpMessage = R"(

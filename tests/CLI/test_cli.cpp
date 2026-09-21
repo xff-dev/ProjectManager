@@ -1,6 +1,8 @@
 #include "../../src/CLI/CLI.hpp"
+#include "../../src/utils/consts.hpp"
 #include "catch2/catch_test_macros.hpp"
 #include "catch2/matchers/catch_matchers_string.hpp"
+#include <string>
 #include <vector>
 
 std::vector<Task> parseArgs(std::vector<const char *> args) {
@@ -95,32 +97,32 @@ TEST_CASE("OpenTask", "[CLI]") {
 
 TEST_CASE("ScriptTask missing name throws", "[CLI]") {
   REQUIRE_THROWS_WITH(parseArgs({"pm", "script"}),
-                      Catch::Matchers::ContainsSubstring("script"));
+                      Catch::Matchers::ContainsSubstring(std::string(consts::errors::MissingScriptName)));
 }
 
 TEST_CASE("RemoveTask missing name throws", "[CLI]") {
   REQUIRE_THROWS_WITH(parseArgs({"pm", "remove"}),
-                      Catch::Matchers::ContainsSubstring("project"));
+                      Catch::Matchers::ContainsSubstring(std::string(consts::errors::MissingProjectName)));
 }
 
 TEST_CASE("AddTask missing name throws", "[CLI]") {
   REQUIRE_THROWS_WITH(parseArgs({"pm", "add"}),
-                      Catch::Matchers::ContainsSubstring("project"));
+                      Catch::Matchers::ContainsSubstring(std::string(consts::errors::MissingProjectName)));
 }
 
 TEST_CASE("AddTask missing path throws", "[CLI]") {
   REQUIRE_THROWS_WITH(parseArgs({"pm", "add", "demo"}),
-                      Catch::Matchers::ContainsSubstring("path"));
+                      Catch::Matchers::ContainsSubstring(std::string(consts::errors::MissingProjectPath)));
 }
 
 TEST_CASE("OpenTask missing name throws", "[CLI]") {
   REQUIRE_THROWS_WITH(parseArgs({"pm", "open"}),
-                      Catch::Matchers::ContainsSubstring("project"));
+                      Catch::Matchers::ContainsSubstring(std::string(consts::errors::MissingProjectName)));
 }
 
 TEST_CASE("Unknown command includes the command name in its error", "[CLI]") {
   REQUIRE_THROWS_WITH(parseArgs({"pm", "unknown"}),
-                      Catch::Matchers::ContainsSubstring("unknown"));
+                      Catch::Matchers::ContainsSubstring(std::format(consts::errors::UnknownCommand, "unknown", "pm")));
 }
 
 TEST_CASE("HelpTask keeps the invoked application name", "[CLI]") {
@@ -144,10 +146,10 @@ TEST_CASE("MigrateTask", "[CLI]") {
 
 TEST_CASE("MigrateTask missing source throws", "[CLI]") {
   REQUIRE_THROWS_WITH(parseArgs({"pm", "migrate"}),
-                      Catch::Matchers::ContainsSubstring("source"));
+                      Catch::Matchers::ContainsSubstring(std::string(consts::errors::MissingMigrationSource)));
 }
 
 TEST_CASE("MigrateTask missing destination throws", "[CLI]") {
   REQUIRE_THROWS_WITH(parseArgs({"pm", "migrate", "/data/legacy"}),
-                      Catch::Matchers::ContainsSubstring("destination"));
+                      Catch::Matchers::ContainsSubstring(std::string(consts::errors::MissingMigrationDestination)));
 }

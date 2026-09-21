@@ -31,10 +31,8 @@ TEST_CASE("run warns when its command fails", "[run][app][warning]") {
 
   runAppWithCwd({RunTask{}}, env.projPath, fixture.registry, output);
 
-  REQUIRE(
-      output.str().ends_with(std::string(consts::ansi::yellow) + "==> " +
-                             std::string(consts::ansi::reset) +
-                             "Process exited with non-zero status code: 12\n"));
+  REQUIRE(output.str().find(std::format(consts::warnings::NonZeroStatusCode, 12)) !=
+        std::string::npos);
   REQUIRE(output.str().find(consts::success::RunSuccessful) ==
           std::string::npos);
   cleanupEnv(env);

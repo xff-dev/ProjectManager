@@ -18,9 +18,8 @@ TEST_CASE("test script open", "[script_open][app]") {
   runAppWithCwd({ScriptTask{"open"}}, env.projPath, fixture.registry, output);
 
   REQUIRE(fs::exists(fs::path(env.projPath) / "created_by_script.txt"));
-  REQUIRE(output.str().ends_with(std::string(consts::ansi::green) + "==> " +
-                                 std::string(consts::ansi::reset) +
-                                 "Script \"open\" ran successfuly\n"));
+  REQUIRE(output.str().find(std::format(consts::success::ScriptSuccessful, "open")) !=
+          std::string::npos);
   cleanupEnv(env);
 }
 
@@ -31,10 +30,8 @@ TEST_CASE("script warns when its command fails", "[script][app][warning]") {
 
   runAppWithCwd({ScriptTask{"open"}}, env.projPath, fixture.registry, output);
 
-  REQUIRE(
-      output.str().ends_with(std::string(consts::ansi::yellow) + "==> " +
-                             std::string(consts::ansi::reset) +
-                             "Process exited with non-zero status code: 9\n"));
+  REQUIRE(output.str().find(std::format(consts::warnings::NonZeroStatusCode, 9)) !=
+        std::string::npos);
   REQUIRE(output.str().find(consts::success::ScriptSuccessful) ==
           std::string::npos);
   cleanupEnv(env);

@@ -1,6 +1,8 @@
 #include "../../src/CommandRunner/CommandRunner.hpp"
 #include "terminal_launchers.hpp"
 
+#include <iostream>
+
 using namespace termlaunchers;
 
 TEMPLATE_LIST_TEST_CASE(
@@ -19,7 +21,7 @@ TEMPLATE_LIST_TEST_CASE(
   command.workingDirectory = work;
 
   std::ostringstream consoleOutput;
-  Console console(consoleOutput);
+  Console console(consoleOutput, std::cin);
   CommandRunner runner(console, std::make_unique<TestType>());
   ScopedTerminal terminal(runner.launchTerminal(command));
 
@@ -49,7 +51,7 @@ TEMPLATE_LIST_TEST_CASE("real terminal applies envCommand before running the "
   command.envCommand = "export PM_TERM_ENV=enabled";
 
   std::ostringstream consoleOutput;
-  Console console(consoleOutput);
+  Console console(consoleOutput, std::cin);
   CommandRunner runner(console, std::make_unique<TestType>());
   ScopedTerminal terminal(runner.launchTerminal(command));
 
@@ -80,7 +82,7 @@ TEMPLATE_LIST_TEST_CASE("real terminal without envCommand inherits the parent "
   command.workingDirectory = work;
 
   std::ostringstream consoleOutput;
-  Console console(consoleOutput);
+  Console console(consoleOutput, std::cin);
   CommandRunner runner(console, std::make_unique<TestType>());
   ScopedTerminal terminal(runner.launchTerminal(command));
 
@@ -111,7 +113,7 @@ TEMPLATE_LIST_TEST_CASE("real terminal envCommand steers the executed command",
   command.envCommand = "export PM_TERM_STEER=on";
 
   std::ostringstream consoleOutput;
-  Console console(consoleOutput);
+  Console console(consoleOutput, std::cin);
   CommandRunner runner(console, std::make_unique<TestType>());
   ScopedTerminal terminal(runner.launchTerminal(command));
 
@@ -133,7 +135,7 @@ TEMPLATE_LIST_TEST_CASE("real terminal executes a command without a "
   command.command = probeCommand(output, "PM_TERM_NOWORKDIR");
 
   std::ostringstream consoleOutput;
-  Console console(consoleOutput);
+  Console console(consoleOutput, std::cin);
   CommandRunner runner(console, std::make_unique<TestType>());
   ScopedTerminal terminal(runner.launchTerminal(command));
 

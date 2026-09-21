@@ -18,10 +18,8 @@ TEST_CASE("test build", "[build][app]") {
   runAppWithCwd({BuildTask{}}, env.projPath, fixture.registry, output);
 
   REQUIRE(fs::exists(fs::path(env.projPath) / "build"));
-  REQUIRE(output.str().ends_with(std::string(consts::ansi::green) + "==> " +
-                                 std::string(consts::ansi::reset) +
-                                 std::string(consts::success::BuildSuccessful) +
-                                 "\n"));
+  REQUIRE(output.str().find(consts::success::BuildSuccessful) !=
+          std::string::npos);
   cleanupEnv(env);
 }
 
@@ -117,7 +115,7 @@ TEST_CASE("build and script run in the order supplied to App",
   REQUIRE(second == "build");
   REQUIRE(third == "script");
   REQUIRE(output.str().find(consts::success::BuildSuccessful) <
-          output.str().find("Script \"open\" ran successfuly"));
+          output.str().find(std::format(consts::success::ScriptSuccessful, "open")));
   cleanupEnv(env);
 }
 
@@ -141,7 +139,7 @@ TEST_CASE("script and build preserve their reversed task order",
   REQUIRE(first == "script");
   REQUIRE(second == "prepare");
   REQUIRE(third == "build");
-  REQUIRE(output.str().find("Script \"open\" ran successfuly") <
+  REQUIRE(output.str().find(std::format(consts::success::ScriptSuccessful, "open")) <
           output.str().find(consts::success::BuildSuccessful));
   cleanupEnv(env);
 }

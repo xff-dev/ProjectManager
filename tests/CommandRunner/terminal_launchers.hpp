@@ -92,7 +92,7 @@ inline fs::path uniqueBaseDir(const std::string &tag) {
 
 inline bool
 waitForFile(const fs::path &path,
-            std::chrono::seconds timeout = std::chrono::seconds(15)) {
+            std::chrono::seconds timeout = std::chrono::seconds(2)) {
   const auto deadline = Clock::now() + timeout;
   while (Clock::now() < deadline) {
     if (fs::exists(path)) {

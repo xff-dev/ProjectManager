@@ -4,6 +4,7 @@
 #include "../test_helpers.hpp"
 #include <filesystem>
 #include <fstream>
+#include <iostream>
 #include <memory>
 #include <optional>
 #include <ostream>
@@ -33,7 +34,7 @@ inline void runAppWithCwd(const std::vector<Task> &tasks,
                           std::ostream &output) {
   CurrentPathGuard cwdGuard(cwd);
 
-  Console console(output);
+  Console console(output, std::cin);
   ConfigLoader loader;
   CommandRunner runner(console, std::make_unique<Dummy>());
   App app(tasks, registry, loader, runner, console);
