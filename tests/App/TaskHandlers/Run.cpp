@@ -23,6 +23,20 @@ TEST_CASE("test run", "[run][app]") {
   cleanupEnv(env);
 }
 
+TEST_CASE("run passes args from -- to the configured command", "[run][app]") {
+  const auto env = createEnvironment("run-args");
+  AppFixture fixture(env);
+  std::ostringstream output;
+
+  runAppWithCwd({RunTask{{"one", "two"}}}, env.projPath, fixture.registry,
+                output);
+
+  REQUIRE(fs::exists(fs::path(env.projPath) / "run"));
+  REQUIRE(fs::exists(fs::path(env.projPath) / "one"));
+  REQUIRE(fs::exists(fs::path(env.projPath) / "two"));
+  cleanupEnv(env);
+}
+
 TEST_CASE("run warns when its command fails", "[run][app][warning]") {
   const auto env = createEnvironment("run-failure");
   configureRun(env, "exit 12");

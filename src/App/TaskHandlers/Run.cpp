@@ -15,6 +15,10 @@ void App::handleTask(RunTask &task) {
   }
 
   command.command = run.command;
+  for (auto arg : task.args) {
+    command.command += " ";
+    command.command += arg;
+  }
 
   int status = runner.run(command);
   if (status != 0) {

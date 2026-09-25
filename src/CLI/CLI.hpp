@@ -5,7 +5,9 @@
 #include <vector>
 
 struct BuildTask {};
-struct RunTask {};
+struct RunTask {
+  std::vector<std::string> args;
+};
 
 struct ListTask {};
 struct ListNamesTask {};
@@ -63,6 +65,8 @@ private:
   OpenTask parseOpenTask();
   HelpTask parseHelpTask();
   MigrateTask parseMigrateTask();
+
+  std::vector<std::string> parseArgs();
 
 private:
   int argn = 1;

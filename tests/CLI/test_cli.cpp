@@ -5,14 +5,18 @@
 #include <string>
 #include <vector>
 
-std::vector<Task> parseArgs(std::vector<const char *> args) {
+CLIResult parseCli(std::vector<const char *> args) {
   std::vector<char *> argv;
   argv.reserve(args.size());
   for (auto arg : args)
     argv.push_back(const_cast<char *>(arg));
 
   CLI cli(static_cast<int>(argv.size()), argv.data());
-  return cli.parse().tasks;
+  return cli.parse();
+}
+
+std::vector<Task> parseArgs(std::vector<const char *> args) {
+  return parseCli(args).tasks;
 }
 
 TEST_CASE("BuildTask ", "[CLI]") {
@@ -131,6 +135,67 @@ TEST_CASE("HelpTask keeps the invoked application name", "[CLI]") {
   REQUIRE(tasks.size() == 1);
   REQUIRE(std::holds_alternative<HelpTask>(tasks.front()));
   CHECK(std::get<HelpTask>(tasks.front()).appName == "custom-pm");
+}
+
+TEST_CASE("RunTask captures args after --", "[CLI]") {
+  auto result = parseCli({"pm", "run", "--", "one", "two", "three"});
+
+  REQUIRE(result.tasks.size() == 1);
+  REQUIRE(std::holds_alternative<RunTask>(result.tasks[0]));
+  CHECK(std::get<RunTask>(result.tasks[0]).args ==
+        std::vector<std::string>{"one", "two", "three"});
+}
+
+TEST_CASE("RunTask with -- and no args stays empty", "[CLI]") {
+  auto result = parseCli({"pm", "run", "--"});
+
+  REQUIRE(result.tasks.size() == 1);
+  REQUIRE(std::holds_alternative<RunTask>(result.tasks[0]));
+  CHECK(std::get<RunTask>(result.tasks[0]).args.empty());
+}
+
+TEST_CASE("RunTask without -- has no args", "[CLI]") {
+  auto result = parseCli({"pm", "run"});
+
+  REQUIRE(result.tasks.size() == 1);
+  REQUIRE(std::holds_alternative<RunTask>(result.tasks[0]));
+  CHECK(std::get<RunTask>(result.tasks[0]).args.empty());
+}
+
+TEST_CASE("Args after -- are not parsed as commands", "[CLI]") {
+  auto result = parseCli({"pm", "run", "--", "list", "build", "run"});
+
+  REQUIRE(result.tasks.size() == 1);
+  REQUIRE(std::holds_alternative<RunTask>(result.tasks[0]));
+  CHECK(std::get<RunTask>(result.tasks[0]).args ==
+        std::vector<std::string>{"list", "build", "run"});
+}
+
+TEST_CASE("Args after -- reach a chained RunTask", "[CLI]") {
+  auto result = parseCli({"pm", "build", "run", "--", "flag"});
+
+  REQUIRE(result.tasks.size() == 2);
+  REQUIRE(std::holds_alternative<BuildTask>(result.tasks[0]));
+  REQUIRE(std::holds_alternative<RunTask>(result.tasks[1]));
+  CHECK(std::get<RunTask>(result.tasks[1]).args ==
+        std::vector<std::string>{"flag"});
+}
+
+TEST_CASE("Args after -- go to every RunTask in the chain", "[CLI]") {
+  auto result = parseCli({"pm", "run", "build", "run", "--", "flag"});
+
+  REQUIRE(result.tasks.size() == 3);
+  CHECK(std::get<RunTask>(result.tasks[0]).args ==
+        std::vector<std::string>{"flag"});
+  CHECK(std::get<RunTask>(result.tasks[2]).args ==
+        std::vector<std::string>{"flag"});
+}
+
+TEST_CASE("Extra token before -- throws", "[CLI]") {
+  REQUIRE_THROWS_WITH(
+      parseArgs({"pm", "run", "extra"}),
+      Catch::Matchers::ContainsSubstring(
+          std::format(consts::errors::UnknownCommand, "extra", "pm")));
 }
 
 TEST_CASE("MigrateTask", "[CLI]") {

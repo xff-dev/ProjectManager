@@ -1,8 +1,10 @@
 #include "CLI.hpp"
 #include "../utils/consts.hpp"
 #include <format>
+#include <iostream>
 #include <stdexcept>
 #include <string>
+#include <variant>
 #include <vector>
 CLI::CLI(int argc, char **argv) : argc(argc), argv(argv) {}
 
@@ -33,6 +35,13 @@ CLIResult CLI::parse() {
       result.tasks.push_back(parseHelpTask());
     } else if (arg == "migrate") {
       result.tasks.push_back(parseMigrateTask());
+    } else if (arg == "--") {
+      auto args = parseArgs();
+      for (auto &task : result.tasks) {
+        if (std::holds_alternative<RunTask>(task)) {
+          std::get<RunTask>(task).args = args;
+        }
+      }
     } else {
       throw std::runtime_error(
           std::format(consts::errors::UnknownCommand, arg, argv[0]));
@@ -126,4 +135,14 @@ MigrateTask CLI::parseMigrateTask() {
   std::string to = argv[argn++];
 
   return MigrateTask{from, to};
+}
+
+std::vector<std::string> CLI::parseArgs() {
+  std::vector<std::string> args;
+
+  while (++argn < argc) {
+    args.push_back(argv[argn]);
+  }
+
+  return args;
 }
