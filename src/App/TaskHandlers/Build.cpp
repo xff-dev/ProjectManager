@@ -5,8 +5,7 @@
 
 void App::handleTask(BuildTask &task) {
   (void)task;
-  Project project = registry.findByPath(".");
-  ProjectConfig config = loader.load(project);
+  ProjectConfig config = getCurrentProjectContext().config;
 
   ProjectBuild build = config.build;
 

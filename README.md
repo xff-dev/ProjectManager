@@ -126,7 +126,13 @@ command = python scripts/merge.py
 - `[run]` — `command` and working `directory`.
 - `script_<name>` — named scripts with an optional `directory`.
 
-To register a project with `open`/`build`/`run`/`script`, add it first:
+`build`, `run`, `script`, and `list-scripts` can run without registration.
+Run them from the project root containing `project.ini`; configured relative
+directories are resolved from the current working directory. If the current
+directory is not found in the registry, pm prints a warning and loads the local
+`project.ini`. A missing or unreadable config reports `Project config not found`.
+
+Register a project to use `open <name>` and include it in `list`/`list-names`:
 
 ```bash
 pm add myproj $(pwd)

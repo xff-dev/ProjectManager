@@ -1,6 +1,9 @@
 #include "App.hpp"
 #include "../utils/consts.hpp"
+#include <filesystem>
 #include <format>
+#include <stdexcept>
+#include <string>
 #include <variant>
 #include <vector>
 
@@ -17,4 +20,22 @@ void App::run() {
 
 void App::handleTask(HelpTask &task) {
   console << std::format(consts::HelpMessage, task.appName) << std::endl;
+}
+
+ProjectContext App::getCurrentProjectContext() {
+  ProjectContext context;
+  std::filesystem::path currentPath = ".";
+
+  try {
+    context.project = registry.findByPath(currentPath);
+  } catch (std::runtime_error &e) {
+    console.warn(e.what());
+  }
+  if (context.project.has_value()) {
+    context.config = loader.load(*context.project);
+  } else {
+    context.config = loader.load(currentPath / "project.ini");
+  }
+
+  return context;
 }

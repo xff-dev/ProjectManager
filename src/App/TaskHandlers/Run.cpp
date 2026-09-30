@@ -3,8 +3,7 @@
 #include <format>
 
 void App::handleTask(RunTask &task) {
-  Project project = registry.findByPath(".");
-  ProjectConfig config = loader.load(project);
+  ProjectConfig config = getCurrentProjectContext().config;
 
   ProjectRun run = config.run;
 

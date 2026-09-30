@@ -4,7 +4,13 @@
 #include "../Project/ConfigLoader.hpp"
 #include "../Project/Registry.hpp"
 #include "../utils/Console.hpp"
+#include <optional>
 #include <vector>
+
+struct ProjectContext {
+  std::optional<Project> project;
+  ProjectConfig config;
+};
 
 class App {
 public:
@@ -25,6 +31,9 @@ private:
   void handleTask(OpenTask &task);
   void handleTask(HelpTask &task);
   void handleTask(MigrateTask &task);
+
+private:
+  ProjectContext getCurrentProjectContext();
 
 private:
   std::vector<Task> tasks;

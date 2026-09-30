@@ -8,8 +8,7 @@
 #include <string>
 
 void App::handleTask(ScriptTask &task) {
-  Project project = registry.findByPath(".");
-  ProjectConfig config = loader.load(project);
+  ProjectConfig config = getCurrentProjectContext().config;
 
   if (config.scripts.find(task.name) == config.scripts.end())
     throw std::runtime_error(std::string(consts::errors::ScriptNotFound));
@@ -34,8 +33,7 @@ void App::handleTask(ScriptTask &task) {
 }
 
 void App::handleTask(ListScriptsTask &task) {
-  Project project = registry.findByPath(".");
-  ProjectConfig config = loader.load(project);
+  ProjectConfig config = getCurrentProjectContext().config;
 
   for (auto [name, script] : config.scripts) {
     console << name << std::endl;
