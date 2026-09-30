@@ -26,11 +26,19 @@ project-specific scripts — all from a single command.
 
 ## Requirements
 
-- C++23 compiler (GCC/Clang)
-- CMake >= 3.12
-- make
-- zsh (used by terminal launchers and autocomplete)
-- One of the supported terminals: Ghostty or Kitty
+- Linux/POSIX environment (process execution uses `fork`, `exec`, and `waitpid`)
+- C++23 compiler (GCC/Clang) and standard library with `std::format` support
+- CMake >= 3.12, make, and Git for building and fetching dependencies
+- Network access on the first build to fetch dependencies from GitHub
+- Bash at `/bin/bash` for executing build, run, and script commands
+
+`pm open` additionally requires zsh, Ghostty or Kitty, and a graphical session.
+zsh is also required for shell completion. The configured editor and any tools
+used by project commands must be installed separately (the default editor is
+`nvim`).
+
+Coverage reports from `scripts/coverage.sh` require `gcovr` and a compiler/toolchain
+supporting `--coverage` (for GCC, this includes `gcov`).
 
 ## Building
 
@@ -39,8 +47,11 @@ cmake -S . -B build
 make -C build -j$(nproc)
 ```
 
-Dependencies (inipp and Catch2) are fetched automatically via CMake's
-`FetchContent`.
+CMake's `FetchContent` automatically downloads these pinned dependencies:
+
+- inipp 1.0.13 — parses `project.ini`
+- tomlplusplus 3.4.0 — reads and writes the TOML project registry
+- Catch2 3.4.0 — test framework (also fetched by the default build)
 
 ## Usage
 
